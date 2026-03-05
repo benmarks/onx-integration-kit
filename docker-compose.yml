@@ -1,0 +1,77 @@
+# onX Integration Kit — Docker Compose
+#
+# Starts all four services with a single command:
+#   docker-compose up --build
+#
+# Services:
+#   onx-hub           :3000  — Translation layer (the core of onX)
+#   mock-acp          :3001  — Mock ACP merchant (OpenAI + Stripe)
+#   mock-ucp          :3002  — Mock UCP merchant (Google)
+#   mock-fulfillment  :3003  — Mock 3PL / WMS
+
+services:
+  onx-hub:
+    build:
+      context: .
+      dockerfile: packages/onx-hub/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      ONX_PORT: "3000"
+      FULFILLMENT_URL: "http://mock-fulfillment:3003/orders"
+    depends_on:
+      - mock-fulfillment
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  mock-acp:
+    build:
+      context: .
+      dockerfile: packages/mock-acp/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      ACP_PORT: "3001"
+      ONX_WEBHOOK_URL: "http://onx-hub:3000/webhooks/acp"
+    depends_on:
+      - onx-hub
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  mock-ucp:
+    build:
+      context: .
+      dockerfile: packages/mock-ucp/Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      UCP_PORT: "3002"
+      ONX_WEBHOOK_URL: "http://onx-hub:3000/webhooks/ucp"
+    depends_on:
+      - onx-hub
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  mock-fulfillment:
+    build:
+      context: .
+      dockerfile: packages/mock-fulfillment/Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      FULFILLMENT_PORT: "3003"
+      ONX_HUB_URL: "http://onx-hub:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3

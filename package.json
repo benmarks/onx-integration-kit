@@ -1,0 +1,21 @@
+{
+  "name": "onx-integration-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "End-to-end testing and reference implementation for onX (Order Network Exchange) with ACP and UCP",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "concurrently -n onx,acp,ucp,ful -c blue,green,yellow,magenta \"pnpm --filter @onx-kit/onx-hub dev\" \"pnpm --filter @onx-kit/mock-acp dev\" \"pnpm --filter @onx-kit/mock-ucp dev\" \"pnpm --filter @onx-kit/mock-fulfillment dev\"",
+    "dev:onx": "pnpm --filter @onx-kit/onx-hub dev",
+    "dev:acp": "pnpm --filter @onx-kit/mock-acp dev",
+    "dev:ucp": "pnpm --filter @onx-kit/mock-ucp dev",
+    "dev:fulfillment": "pnpm --filter @onx-kit/mock-fulfillment dev",
+    "test:scenarios": "npx tsx scenarios/run-all.ts",
+    "clean": "pnpm -r clean"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}
