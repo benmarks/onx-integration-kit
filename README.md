@@ -8,13 +8,13 @@ This kit demonstrates how onX normalizes orders from both **OpenAI's ACP** (Agen
 
 ```
 ┌─────────────────┐     webhook      ┌──────────────┐    fulfillment    ┌─────────────────┐
-│   Mock ACP      │────────────────▶│              │────────────────▶│                 │
-│   Merchant      │                  │   onX Hub    │                  │  Mock 3PL/WMS   │
-│   (port 3001)   │                  │  (port 3000) │◀────────────────│   (port 3003)   │
+│   Mock ACP      │─────────────────▶│              │──────────────────▶│                 │
+│   Merchant      │                  │   onX Hub    │                   │  Mock 3PL/WMS   │
+│   (port 3001)   │                  │  (port 3000) │◀──────────────────│   (port 3003)   │
 └─────────────────┘                  │              │   status update   └─────────────────┘
                                      │              │
 ┌─────────────────┐   notification   │              │
-│   Mock UCP      │────────────────▶│              │
+│   Mock UCP      │─────────────────▶│              │
 │   Merchant      │                  │              │
 │   (port 3002)   │                  └──────┬───────┘
 └─────────────────┘                         │
